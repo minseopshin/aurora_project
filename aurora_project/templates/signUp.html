@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <div>회원가입</div>
+    <form id="signup-form" method="POST" action="/user/signup" onsubmit="beforeSubmit(event)">
+        <div>
+            <span>아이디</span>
+            <input type="text" name="userid" id="userid">
+            <div onclick="idCheck()">중복확인</div>
+            <p id="useridResult"></p>
+        </div>
+        <div>
+            <span>비밀번호</span>
+            <input type="password" id="pwd" name="pwd">
+        </div>
+        <div>
+            <span>비밀번호확인</span>
+            <input type="password" id="pwdChk">
+            <p id="pwdResult"></p>
+        </div>
+        <div>
+            <button type="button">취소</button>
+            <button type="submit">가입하기</button>
+        </div>
+    </form>
+</body>
+<script>
+    let idCheckYN = false;
+
+    async function idCheck() {
+        const userid = document.getElementById("userid").value;
+        const result = document.getElementById("useridResult");
+
+        if (userid === "") {
+            alert("아이디를 입력해주세요");
+            return;
+        }
+
+        const response = await fetch(`/user/idchk?userid=${userid}`);
+        const data = await response.json();
+        if (data.exists) {
+            result.textContent = "아이디가 이미 존재합니다.";  
+            result.style.color = "red";
+            idCheckYN = false;
+        } else {
+            result.textContent = "사용 가능한 아이디입니다.";  
+            result.style.color = "green";
+            idCheckYN = true;
+        }
+    }
+
+    async function beforeSubmit(event) {
+        event.preventDefault(); 
+        const userid = document.getElementById("userid").value;
+        const pwd = document.getElementById("pwd").value;
+        const pwdChk = document.getElementById("pwdChk").value;
+
+        if (userid === "") {
+            alert("아이디를 입력해주세요");
+            return false;
+        } else if (pwd === "") {
+            alert("비밀번호를 입력해주세요");
+            return false;
+        } else if (!idCheckYN) {
+            alert("아이디 중복확인을 해주세요.");
+            return false;
+        } else if (pwd != pwdChk) {
+            const pwdResult = document.getElementById("pwdResult");
+            pwdResult.textContent = "비밀번호가 일치하지 않습니다.";  
+            pwdResult.style.color = "red";
+            return false;
+        } else {
+            document.getElementById("signup-form").submit();
+        }
+    }
+</script>
+</html>

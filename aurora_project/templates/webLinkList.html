@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <div>
+        <button onclick = "location.href = '/login/signout'">로그아웃</button>
+    </div>
+    <div>
+        검색
+        <input type="text">
+        <button >검색</button>
+    </div>
+    <div>
+        <div>카테고리</div>
+        <div>
+            <input type="checkbox" id="mark" checked>
+            <label for="mark">즐겨찾기</label>
+            <input type="checkbox" id="task" checked>
+            <label for="task">업무 활용 자료</label>
+            <input type="checkbox" id="resource" checked>
+            <label for="resource">참고 자료</label>
+            <input type="checkbox" id="edu" checked>
+            <label for="edu">교육 및 학습 자료</label>
+            <input type="checkbox" id="etc" checked>
+            <label for="etc">기타</label>
+        </div>
+    </div>
+	<div style="border:1px solid black; padding: 10px 5px;">
+        <div style="display: flex; justify-content:space-between; align-items: center; margin:5px;">
+            <span>리스트</span>
+            <button onclick = "location.href = '/weblink/create'">등록</button>
+        </div>
+        <div style="border:1px solid black; width:100%-10px; height:100px; margin: 10px 5px;">
+            <a href="https://www.naver.com" style="text-decoration-line: none;">네이버</a>
+            작성자
+            <button onclick = "location.href = '/weblink/update'">수정</button> 
+            <button onclick = "location.href = '/weblink/delete'">삭제</button>
+        </div>
+    </div>
+</body>
+</html>
