@@ -8,4 +8,4 @@ mydb = mysql.connector.connect(
     database="aurora_project"
 )
 
-dbConnecter = mydb.cursor()
+dbConnecter = mydb.cursor(dictionary=True)

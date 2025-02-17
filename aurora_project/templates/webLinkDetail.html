@@ -2,27 +2,29 @@
 <html lang="en">
 <body>
     <div>등록수정</div>
-    <div>
-        링크
-        <input type="text">
-    </div>
-    <div>
-        웹 이름
-        <input type="text">
-    </div>
-    <div>
-        카테고리
-        <select>
-            <option>즐겨찾기</option>
-            <option>업무 활용 자료</option>
-            <option>참고 자료</option>
-            <option>교육 및 학습 자료</option>
-            <option>기타</option>
-        </select>
-    </div>
-    <div>
-        공유
-        <button>사용자 검색</button>  
-    </div>
+    <form  method="POST" action="{{ '/weblink/update' if data else '/weblink/create' }}" >
+        {% if data %}
+        <input type="hidden" name="webLinkNo" value="{{ data.webLinkNo if data.webLinkNo else '' }}">
+        {% endif %}
+        <div>
+            링크
+            <input type="text" name="url" value="{{ data.url if data else '' }}">
+        </div>
+        <div>
+            웹 이름
+            <input type="text" name="name" value="{{ data.name if data else '' }}">
+        </div>
+        <div>
+            카테고리
+            <select name="category">
+                <option value="mark" {% if data and data.category == 'mark' %}selected{% endif %}>즐겨찾기</option>
+                <option value="task" {% if data and data.category == 'task' %}selected{% endif %}>업무 활용 자료</option>
+                <option value="resource" {% if data and data.category == 'resource' %}selected{% endif %}>참고 자료</option>
+                <option value="edu" {% if data and data.category == 'edu' %}selected{% endif %}>교육 및 학습 자료</option>
+                <option value="etc" {% if data and data.category == 'etc' %}selected{% endif %}>기타</option>
+            </select>
+        </div>
+        <button type="submit">등록</button>
+    </form>
 </body>
 </html>

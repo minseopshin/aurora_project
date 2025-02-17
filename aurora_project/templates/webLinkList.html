@@ -27,14 +27,26 @@
 	<div style="border:1px solid black; padding: 10px 5px;">
         <div style="display: flex; justify-content:space-between; align-items: center; margin:5px;">
             <span>리스트</span>
-            <button onclick = "location.href = '/weblink/create'">등록</button>
+            <button onclick = "location.href = '/weblink/create/page'">등록</button>
         </div>
+        {% for item in data %}
         <div style="border:1px solid black; width:100%-10px; height:100px; margin: 10px 5px;">
-            <a href="https://www.naver.com" style="text-decoration-line: none;">네이버</a>
-            작성자
-            <button onclick = "location.href = '/weblink/update'">수정</button> 
-            <button onclick = "location.href = '/weblink/delete'">삭제</button>
+            <a href="https://www.naver.com" style="text-decoration-line: none;">{{ item.name }}</a>
+            {{ item.created_by }}
+            {{ item.url }}
+            {{ item.category }}
+            {{ item.create_date }}
+            <form method="post" action="/weblink/update/page">
+                <input type="hidden" name="webLinkNo" value="{{ item.webLinkNo }}">
+                <button type="submit">수정</button> 
+            </form>
+            <form method="post" action="/weblink/delete">
+                <input type="hidden" name="webLinkNo" value="{{ item.webLinkNo }}">
+                <button type="submit">삭제</button> 
+            </form>
         </div>
+        {% endfor %}
     </div>
 </body>
+
 </html>

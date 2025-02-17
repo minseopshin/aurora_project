@@ -1,37 +1,73 @@
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, RedirectResponse
+from starlette import status
 from fastapi import APIRouter, Form, Request, Response
+from db import webLinkSQL
+from jose import jwt
+
+SECRET_KEY = "abcde"
+ALGORITHM = "HS256"
 
 templates = Jinja2Templates(directory="templates")
 router = APIRouter(prefix="/weblink")
 
+def login_check(request: Request):
+    token = request.cookies.get("access_token")  # 쿠키에서 JWT 가져오기
+    if not token:
+        return 0
+    else :
+        return 1
+
+
 # 웹링크 리스트
 @router.api_route("/", methods=["GET", "POST"], response_class=HTMLResponse)
 async def webLinkMain(request: Request):
-    return templates.TemplateResponse("webLinkList.html", { "request": request})
+    if not login_check(request):
+        return RedirectResponse("/")
+    
+    sqlResult = webLinkSQL.getWebLinkList(None)
+    print(sqlResult)
+    return templates.TemplateResponse("webLinkList.html", { "request": request, "data": sqlResult})
 
-# 웹링크 생성
-@router.get("/create", response_class=HTMLResponse)
+# 웹링크 생성 페이지
+@router.get("/create/page", response_class=HTMLResponse)
 async def createWebLink(request: Request):
     return templates.TemplateResponse("webLinkDetail.html", { "request": request})
 
+# 웹링크 생성 페이지
+@router.post("/create", response_class=HTMLResponse)
+async def createWebLink(request: Request, url:str=Form(...), name:str=Form(...), category:str=Form(...)):
+    token = request.cookies.get("access_token").replace("Bearer ", "")
+    userInfo = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    data = {"userNo": userInfo.get("userNo"), "created_by": userInfo.get("userid"), "url": url, "name":name, "category":category, "create_date": "now"}
+    webLinkSQL.createWebLink(data)
+    return RedirectResponse("/weblink", status_code=302)
+
 # 웹링크 수정
-@router.get("/update", response_class=HTMLResponse)
-async def updateWebLink(request: Request):
-    return templates.TemplateResponse("webLinkDetail.html", { "request": request})
+# @router.get("/update", response_class=HTMLResponse)
+# async def updateWebLink(request: Request, webLinkNo:int=Form(...)):
+#     data = {"webLinkNo" :webLinkNo}
+#     sqlResult = webLinkSQL.getWebLinkList(data)
+#     return templates.TemplateResponse("webLinkDetail.html", { "request": request, "data": sqlResult[0]})
+
+@router.post("/update", response_class=HTMLResponse)
+async def updateWebLink(request: Request, webLinkNo:int=Form(...), url:str=Form(...), name:str=Form(...), category:str=Form(...)):
+    data = {"url": url, "name":name, "category":category}
+    webLinkSQL.updateWebLink(webLinkNo=webLinkNo, data=data)
+    return RedirectResponse("/weblink", status_code=302)
+
+@router.post("/update/page", response_class=HTMLResponse)
+async def deleteWebLink(request: Request, webLinkNo:int=Form(...)):
+    data = {"webLinkNo" :webLinkNo}
+
+    sqlResult = webLinkSQL.getWebLinkList(data)
+    return templates.TemplateResponse("webLinkDetail.html", { "request": request, "data": sqlResult[0]})
+
 
 # 웹링크 삭제
-@router.get("/delete", response_class=HTMLResponse)
-async def deleteWebLink(request: Request):
-    return RedirectResponse(url="/weblink")
+@router.post("/delete", response_class=HTMLResponse)
+async def deleteWebLink(request: Request, webLinkNo:int=Form(...)):
+    
 
-
-@router.get("/posttest", response_class=HTMLResponse)
-async def posttest(request: Request):
-    return templates.TemplateResponse("posttest.html", { "request": request})
-
-@router.post("/posttest", response_class=HTMLResponse)
-async def posttest2(request: Request, posttest:str = Form(...), pwd:str = Form(...)):
-    print(posttest)
-    print(pwd)
-    return "a"
+    sqlResult = webLinkSQL.deleteWebLink(webLinkNo=webLinkNo)
+    return RedirectResponse(url="/weblink", status_code=302)
