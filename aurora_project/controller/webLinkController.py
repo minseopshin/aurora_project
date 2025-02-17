@@ -1,5 +1,5 @@
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from starlette import status
 from fastapi import APIRouter, Form, Request, Response
 from db import webLinkSQL
@@ -26,7 +26,6 @@ async def webLinkMain(request: Request):
         return RedirectResponse("/")
     
     sqlResult = webLinkSQL.getWebLinkList(None)
-    print(sqlResult)
     return templates.TemplateResponse("webLinkList.html", { "request": request, "data": sqlResult})
 
 # 웹링크 생성 페이지
@@ -67,7 +66,11 @@ async def deleteWebLink(request: Request, webLinkNo:int=Form(...)):
 # 웹링크 삭제
 @router.post("/delete", response_class=HTMLResponse)
 async def deleteWebLink(request: Request, webLinkNo:int=Form(...)):
-    
-
     sqlResult = webLinkSQL.deleteWebLink(webLinkNo=webLinkNo)
     return RedirectResponse(url="/weblink", status_code=302)
+
+@router.post("/search", response_class=HTMLResponse)
+async def searchWebLink(request: Request, search:str=Form(...)):
+    data = {"search": search}
+    sqlResult = webLinkSQL.getWebLinkList(data)
+    return JSONResponse(content=sqlResult)

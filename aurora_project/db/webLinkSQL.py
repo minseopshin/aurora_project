@@ -10,8 +10,10 @@ def getWebLinkList (data):
         for key, value in data.items(): 
             if type(value) == int or type(value) == float:
                 sql += f" AND {key} = {value}"
+            elif key == "search" :
+                sql += f" AND name like '%{value}%' "
             else :
-                sql += f" ADN {key} = '{value}'"
+                sql += f" AND {key} = '{value}'"
 
     print(sql)       
     dbConnecter.execute(sql)                      

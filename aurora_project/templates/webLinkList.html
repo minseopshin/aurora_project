@@ -4,23 +4,27 @@
     <div>
         <button onclick = "location.href = '/login/signout'">로그아웃</button>
     </div>
+
     <div>
         검색
-        <input type="text">
-        <button >검색</button>
+        <input type="text" id="search">
+        <button onclick="searchWebLink()">검색</button>
     </div>
+
     <div>
         <div>카테고리</div>
         <div>
-            <input type="checkbox" id="mark" checked>
+            <input type="checkbox" id="all" value="all" onClick="check(this)" checked>
+            <label for="all">전체</label>
+            <input type="checkbox" id="mark" value="mark" onClick="check(this)" checked>
             <label for="mark">즐겨찾기</label>
-            <input type="checkbox" id="task" checked>
+            <input type="checkbox" id="task" value="task" onClick="check(this)" checked>
             <label for="task">업무 활용 자료</label>
-            <input type="checkbox" id="resource" checked>
+            <input type="checkbox" id="resource" value="resource" onClick="check(this)" checked>
             <label for="resource">참고 자료</label>
-            <input type="checkbox" id="edu" checked>
+            <input type="checkbox" id="edu" value="edu" onClick="check(this)" checked>
             <label for="edu">교육 및 학습 자료</label>
-            <input type="checkbox" id="etc" checked>
+            <input type="checkbox" id="etc" value="etc" onClick="check(this)" checked>
             <label for="etc">기타</label>
         </div>
     </div>
@@ -29,24 +33,96 @@
             <span>리스트</span>
             <button onclick = "location.href = '/weblink/create/page'">등록</button>
         </div>
-        {% for item in data %}
-        <div style="border:1px solid black; width:100%-10px; height:100px; margin: 10px 5px;">
-            <a href="https://www.naver.com" style="text-decoration-line: none;">{{ item.name }}</a>
-            {{ item.created_by }}
-            {{ item.url }}
-            {{ item.category }}
-            {{ item.create_date }}
-            <form method="post" action="/weblink/update/page">
-                <input type="hidden" name="webLinkNo" value="{{ item.webLinkNo }}">
-                <button type="submit">수정</button> 
-            </form>
-            <form method="post" action="/weblink/delete">
-                <input type="hidden" name="webLinkNo" value="{{ item.webLinkNo }}">
-                <button type="submit">삭제</button> 
-            </form>
+        <div id="listContainer">
+            {% for item in data %}
+            <div style="border:1px solid black; width:100%-10px; height:100px; margin: 10px 5px;">
+                <a href="https://www.naver.com" style="text-decoration-line: none;">{{ item.name }}</a>
+                {{ item.created_by }}
+                {{ item.url }}
+                {{ item.category }}
+                {{ item.create_date }}
+                <form method="post" action="/weblink/update/page">
+                    <input type="hidden" name="webLinkNo" value="{{ item.webLinkNo }}">
+                    <button type="submit">수정</button> 
+                </form>
+                <form method="post" action="/weblink/delete">
+                    <input type="hidden" name="webLinkNo" value="{{ item.webLinkNo }}">
+                    <button type="submit">삭제</button> 
+                </form>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
 </body>
+<script>
 
+    let category = ["mark", "task", "resource", "edu", "etc"];
+
+    async function check(box) {
+        if (box.id === "all") {
+            let checkbox = document.querySelectorAll("input[type='checkbox']");
+            checkbox.forEach(cb => {
+                cb.checked = box.checked;
+                if (cb.value !== "all") updateCategorySelection(cb.checked, cb.value);
+            });
+        } else {
+            updateCategorySelection(box.checked, box.value);
+            document.getElementById("all").checked = category.length === 5;
+        }
+
+        searchWebLink(); // 카테고리 변경 시 자동 검색
+    }
+
+    function updateCategorySelection(isChecked, value) {
+        if (isChecked) {
+            if (!category.includes(value)) category.push(value);
+        } else {
+            category = category.filter(cat => cat !== value);
+        }
+    }
+
+    async function searchWebLink() {
+        const searchData = document.getElementById("search").value;
+
+        const formData = new FormData();
+        formData.append("search", searchData);
+
+        const response = await fetch("/weblink/search", {
+            method: "POST",
+            body: formData
+        });
+
+        if (response.ok) {
+            data = await response.json()
+
+            const listContainer = document.getElementById("listContainer");
+            listContainer.innerHTML = "";
+
+            data
+            .filter(item => category.includes(item.category))
+            .forEach(item => {const listItem = document.createElement("div");
+            listItem.className = "list-item";
+            listItem.dataset.id = item.webLinkNo;
+            listItem.innerHTML = `
+                <a href="${item.url}" style="text-decoration-line: none;">${item.name}</a>
+                <div>작성자: ${item.created_by}</div>
+                <div>카테고리: ${item.category}</div>
+                <div>등록일: ${item.create_date}</div>
+                <form method="post" action="/weblink/update/page">
+                    <input type="hidden" name="webLinkNo" value="${item.webLinkNo}">
+                    <button type="submit">수정</button> 
+                </form>
+                <form method="post" action="/weblink/delete">
+                    <input type="hidden" name="webLinkNo" value="${item.webLinkNo}">
+                    <button type="submit">삭제</button> 
+                </form>
+                `;
+                listContainer.appendChild(listItem);
+            });
+
+        } else {
+            alert("검색에 실패했습니다.");
+        }
+    }
+</script>
 </html>
