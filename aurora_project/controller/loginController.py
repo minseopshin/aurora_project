@@ -8,9 +8,10 @@ from typing import Optional
 from jose import jwt, JWTError
 from starlette import status
 from db import loginSQL
+from config import jwtConfig
 
-SECRET_KEY = "abcde"
-ALGORITHM = "HS256"
+SECRET_KEY = jwtConfig.SECRET_KEY
+ALGORITHM = jwtConfig.SECRET_KEY
 
 templates = Jinja2Templates(directory="templates")
 router = APIRouter(prefix="/login")

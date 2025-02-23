@@ -1,14 +1,13 @@
 from fastapi.encoders import jsonable_encoder
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
-from starlette import status
-from fastapi import APIRouter, Form, Request, Response
+from fastapi import APIRouter, Form, Request
 from db import webLinkSQL
 from jose import jwt
-import datetime
+from config import jwtConfig
 
-SECRET_KEY = "abcde"
-ALGORITHM = "HS256"
+SECRET_KEY = jwtConfig.SECRET_KEY
+ALGORITHM = jwtConfig.SECRET_KEY
 
 templates = Jinja2Templates(directory="templates")
 router = APIRouter(prefix="/weblink")
