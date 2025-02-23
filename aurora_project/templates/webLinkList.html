@@ -75,17 +75,15 @@
                     <div>
                         <div>
                         <form method="post" action="/weblink/update/page">
-                            <input type="hidden" name="webLinkNo" value="{{ item.webLinkNo }}">
+                            <input type="hidden" id="webLinkNo" name="webLinkNo" value="{{ item.webLinkNo }}">
                             <button type="submit" style="margin-bottom: 5px; height:25px;">수정</button> 
                         </form>
                     {% endif %}
                     {% if item.userNo ==  item.shareUserNo %}
-                        <form method="post" action="/weblink/delete">
-                            <input type="hidden" name="webLinkNo" value="{{ item.webLinkNo }}">
-                            <button type="submit" style="margin-bottom: 5px; height:25px;">삭제</button> 
-                        </form> 
+                        <input type="hidden" id="deleteWebLinkNo" name="webLinkNo" value="{{ item.webLinkNo }}">
+                        <button onclick="deleteWebLink({{ item.webLinkNo }})" style="margin-bottom: 5px; height:25px;">삭제</button> 
                         <form method="get" action="/weblink/share">
-                            <input type="hidden" name="webLinkNo" value="{{ item.webLinkNo }}">
+                            <input type="hidden" id="webLinkNo" name="webLinkNo" value="{{ item.webLinkNo }}">
                             <button type="submit" style="height:25px;">공유</button> 
                         </form>
                         </div>
@@ -124,6 +122,21 @@
         }
     }
 
+    async function deleteWebLink(webLinkNo) {
+        const formData = new FormData();
+        formData.append("webLinkNo", webLinkNo);
+        
+        const response = await fetch("/weblink/delete", {
+            method: "POST",
+            body: formData
+        });
+
+        if (response.ok) {
+            alert("삭제되었습니다.")
+            window.location.href = "/weblink"
+        }
+    }
+
     async function searchWebLink() {
         const searchData = document.getElementById("search").value;
 
@@ -158,22 +171,20 @@
                         <div>${ item.create_date }</div>
                     </div>
                     <div style="width:50%">
-                        <a href="https://${ item.url }" style="text-decoration-line: none; font-size: 23px;">${ item.name }</a>
+                        <a href="${item.url.startsWith('http') ? item.url : 'https://' + item.url}" style="text-decoration-line: none; font-size: 23px;">${ item.name }</a>
                     </div>
                     <div>
                         ${item.update_YN  ? `
                         <form method="post" action="/weblink/update/page">
-                            <input type="hidden" name="webLinkNo" value="${item.webLinkNo}">
+                            <input type="hidden" id="webLinkNo" name="webLinkNo" value="${item.webLinkNo}">
                             <button type="submit" style="margin-bottom: 5px; height:25px;">수정</button> 
                         </form>
                     `:''}
                     ${item.userNo === item.shareUserNo ? `
-                        <form method="post" action="/weblink/delete">
-                            <input type="hidden" name="webLinkNo" value="${item.webLinkNo}">
-                            <button type="submit" style="margin-bottom: 5px; height:25px;">삭제</button> 
-                        </form>
+                        <input type="hidden" id="deleteWebLinkNo" name="webLinkNo" value="${item.webLinkNo}">
+                        <button onclick="deleteWebLink(${item.webLinkNo})" style="margin-bottom: 5px; height:25px;">삭제</button> 
                         <form method="post" action="/weblink/share">
-                            <input type="hidden" name="webLinkNo" value="${item.webLinkNo}">
+                            <input type="hidden" id="webLinkNo" name="webLinkNo" value="${item.webLinkNo}">
                             <button type="submit" style="height:25px;">공유</button> 
                         </form>
                     `:''}
@@ -187,5 +198,6 @@
             alert("검색에 실패했습니다.");
         }
     }
+
 </script>
 </html>

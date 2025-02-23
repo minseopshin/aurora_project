@@ -17,12 +17,16 @@ templates = Jinja2Templates(directory="templates")
 router = APIRouter(prefix="/login")
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated="auto")
 
+
+# 해시 비밀번호 생성
 def get_password_hash(password):
     return bcrypt_context.hash(password)
 
+# 비밀번호 확인
 def verify_password(plain_password, hashed_password):
     return bcrypt_context.verify(plain_password, hashed_password)
 
+# 토큰 생성
 def create_access_token(userNo: int,userid: str, expires_delta: Optional[timedelta] = None):
     encode = {"userNo":userNo, "userid": userid}
     if expires_delta:
@@ -32,6 +36,7 @@ def create_access_token(userNo: int,userid: str, expires_delta: Optional[timedel
     encode.update({"exp": expire})
     return jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
 
+# 유저 확인
 def authenticate_user(userid:str, pwd:str):
     data = {"userid": userid}
     user = loginSQL.getUserList(data=data)
@@ -41,6 +46,7 @@ def authenticate_user(userid:str, pwd:str):
         return False
     return user[0]
 
+#로그인 토큰 저장
 @router.post("/token")
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     user = authenticate_user(form_data.username, form_data.password)
@@ -71,6 +77,7 @@ async def signIn(request: Request, userid:str=Form(...), pwd:str=Form(...)):
     
     return response
 
+# 로그아웃
 @router.get("/signout")
 async def logout():
     response = RedirectResponse(url="/login")

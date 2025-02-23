@@ -4,7 +4,17 @@ dbConnecter = database.dbConnecter
 
 # 조회
 def getWebLinkList (data): 
-    sql = "SELECT * FROM webLink wl inner join webLinkShare wls on wl.webLinkNo = wls.webLinkNo WHERE 1 = 1 AND wls.read_YN = 1 AND wl.delete_YN = 0"
+    sql = """
+        SELECT
+            * 
+        FROM 
+            webLink wl 
+            inner join webLinkShare wls on wl.webLinkNo = wls.webLinkNo 
+        WHERE 
+            1 = 1 
+            AND wls.read_YN = 1 
+            AND wl.delete_YN = 0
+    """
 
     if data is not None:
         for key, value in data.items(): 

@@ -36,9 +36,3 @@ async def idCheck(userid: str):
     else :
         return  {"exists": "exists"}
     
-
-@router.post("/search", response_class=HTMLResponse)
-async def searchId(request: Request, search:str=Form(...), webLinkNo:int=Form(...)):
-    data = {"search": search}
-    sqlResult = userSQL.getUserList(data)
-    return JSONResponse(content=sqlResult)
