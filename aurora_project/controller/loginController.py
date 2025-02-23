@@ -11,7 +11,7 @@ from db import loginSQL
 from config import jwtConfig
 
 SECRET_KEY = jwtConfig.SECRET_KEY
-ALGORITHM = jwtConfig.SECRET_KEY
+ALGORITHM = jwtConfig.ALGORITHM
 
 templates = Jinja2Templates(directory="templates")
 router = APIRouter(prefix="/login")
