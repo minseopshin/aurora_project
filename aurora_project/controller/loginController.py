@@ -33,17 +33,12 @@ def create_access_token(userNo: int,userid: str, expires_delta: Optional[timedel
 
 def authenticate_user(userid:str, pwd:str):
     data = {"userid": userid}
-    user = loginSQL.getUserList(data=data)[0]
-    if not user or not verify_password(pwd, user["password"]):
+    user = loginSQL.getUserList(data=data)
+    if len(user) == 0 :
         return False
-    return user
-
-def login_check(request: Request):
-    token = request.cookies.get("access_token")  # 쿠키에서 JWT 가져오기
-    if not token:
-        return 0
-    else :
-        return 1
+    if not user[0] or not verify_password(pwd, user[0]["password"]):
+        return False
+    return user[0]
 
 @router.post("/token")
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
@@ -64,7 +59,7 @@ async def loginMain(request: Request):
 async def signIn(request: Request, userid:str=Form(...), pwd:str=Form(...)):
     user = authenticate_user(userid, pwd)
     if not user or not bcrypt_context.verify(pwd, user["password"]):
-        return JSONResponse(content={"message": "아이디 또는 비밀번호가 틀렸습니다."}, status_code=400)
+        return RedirectResponse(url="/login?error=아이디+또는+비밀번호+가+틀렸습니다.", status_code=302)
 
     # JWT 토큰 발급
     access_token = create_access_token(userNo=user["userNo"], userid=user["userId"])

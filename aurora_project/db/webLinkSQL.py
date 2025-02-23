@@ -37,7 +37,8 @@ def createWebLink (data):
     dbConnecter.execute(sql2, data2)                      
     result = database.mydb.commit()
 
-    print(sql)
+    print(sql1)
+    print(sql2)
     
     return result
 
@@ -89,6 +90,8 @@ def getWebLinkShareUserList (data):
         for key, value in data.items(): 
             if key == "search" :
                 sql += f" AND userId like '%{value}%' "
+            elif key == "userNo":
+                sql += f" AND userNo != {value} "
 
     data = (data["webLinkNo"], data["webLinkNo"])
     dbConnecter.execute(sql,data)                      
