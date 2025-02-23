@@ -75,11 +75,6 @@ async def signIn(request: Request, userid:str=Form(...), pwd:str=Form(...)):
     
     return response
 
-# # 로그아웃
-# @router.get("/signout", response_class=HTMLResponse)
-# async def signOut(request: Request):
-#     return RedirectResponse(url="/login")
-
 @router.get("/signout")
 async def logout():
     response = RedirectResponse(url="/login")

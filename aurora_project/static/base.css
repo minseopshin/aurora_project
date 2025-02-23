@@ -1,0 +1,22 @@
+body {
+    margin : 0;
+}
+
+.mainBackground {
+    width: 100vw;
+	height: 100vh;
+	overflow: hidden;
+	background: #ddd;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.contentsBackground {
+    width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 500px;
+}

@@ -1,28 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', path='/base.css') }}">
+</head>
 <body>
-    <div>회원가입</div>
-    <form id="signup-form" method="POST" action="/user/signup" onsubmit="beforeSubmit(event)">
-        <div>
-            <span>아이디</span>
-            <input type="text" name="userid" id="userid">
-            <div onclick="idCheck()">중복확인</div>
-            <p id="useridResult"></p>
+    <div class="mainBackground">
+		<div class="contentsBackground">
+            <div style="font-size: 30px; font-weight: bold; margin-bottom: 10px ;">회원가입</div>
+            <form id="signup-form" method="POST" action="/user/signup" onsubmit="beforeSubmit(event)">
+                <div style="width:100%;  display: flex; margin-bottom: 5px;">
+                    <div style=" width:90px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">아이디</div>
+                    <input type="text" name="userid" id="userid" style="height:25px; width:200px; border-radius: 5px; border:none; margin-right:5px ;">
+                    <input type="button" onclick="idCheck()" value="중복확인">
+                    <p id="useridResult"></p>
+                </div>
+                <div style="width:100%;  display: flex; margin-bottom: 5px;">
+                    <div style=" width:90px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">비밀번호</div>
+                    <input type="password" name="pwd" id="pwd" style="height:25px; width:200px; border-radius: 5px; border:none">
+                </div>
+                <div style="width:100%;  display: flex; margin-bottom: 5px;">
+                    <div style=" width:90px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">비밀번호확인</div>
+                    <input type="password" name="pwdChk" id="pwdChk" style="height:25px; width:200px; border-radius: 5px; border:none">
+                    <p id="pwdResult"></p>
+                </div>
+                <div style=" width: 100%; display: flex; justify-content: center; align-items: center;">
+                    <input type="button" onclick="location.href = '/login'" style="height:25px; width:100px" value="취소">
+                    <button type="submit" style="height:25px; width:100px; margin-left:10px ;">가입하기</button>
+                </div>
+            </form>
         </div>
-        <div>
-            <span>비밀번호</span>
-            <input type="password" id="pwd" name="pwd">
-        </div>
-        <div>
-            <span>비밀번호확인</span>
-            <input type="password" id="pwdChk">
-            <p id="pwdResult"></p>
-        </div>
-        <div>
-            <button type="button">취소</button>
-            <button type="submit">가입하기</button>
-        </div>
-    </form>
+    </div>
 </body>
 <script>
     let idCheckYN = false;
