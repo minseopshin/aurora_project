@@ -14,5 +14,7 @@ def getUserList (data):
     
     dbConnecter.execute(sql,data)                      
     result = dbConnecter.fetchall() 
+
+    print(sql)
     
     return result
